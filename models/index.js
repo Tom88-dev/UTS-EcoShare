@@ -1,13 +1,15 @@
 const { sequelize } = require("../config/database");
 
-const { initUserModel, User } = require("./user");
-const { initItemModel, Item } = require("./item");
-const { initRentalModel, Rental } = require("./rental");
+const { initUserModel } = require("./user");
+const { initItemModel } = require("./item");
+const { initRentalModel } = require("./rental");
 
 function initModels() {
   initUserModel(sequelize);
   initItemModel(sequelize);
   initRentalModel(sequelize);
+
+  const { User, Item, Rental } = sequelize.models;
 
   // Associations
   User.hasMany(Item, { foreignKey: "ownerId", as: "ownedItems" });
@@ -33,8 +35,14 @@ async function initDatabase() {
 module.exports = {
   sequelize,
   initDatabase,
-  User,
-  Item,
-  Rental,
+  get User() {
+    return sequelize.models.User;
+  },
+  get Item() {
+    return sequelize.models.Item;
+  },
+  get Rental() {
+    return sequelize.models.Rental;
+  },
 };
 
