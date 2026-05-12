@@ -1,3 +1,4 @@
+// Main entry point for Eco-Share API
 require("dotenv").config();
 
 const express = require("express");
