@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { AppError } = require("./errors");
-const { User } = require("../models");
+const db = require("../models"); // Cukup panggil db di sini, tidak perlu panggil getUser() dulu
 
 function signToken(user) {
   const secret = process.env.JWT_SECRET;
@@ -22,6 +22,9 @@ async function register({ email, password, role }) {
     throw new AppError("VALIDATION_ERROR", "Invalid role", 400);
   }
 
+  // PANGGIL DATABASE DI SINI (Saat fungsi register dijalankan)
+  const User = db.User;
+
   const existing = await User.findOne({ where: { email } });
   if (existing) throw new AppError("CONFLICT", "Email already used", 409);
 
@@ -37,9 +40,12 @@ async function login({ email, password }) {
     throw new AppError("VALIDATION_ERROR", "email and password are required", 400);
   }
 
+  // PANGGIL DATABASE JUGA DI SINI (Saat fungsi login dijalankan)
+  const User = db.User;
+
   const user = await User.findOne({ where: { email } });
   if (!user) throw new AppError("UNAUTHORIZED", "Invalid credentials", 401);
-
+  
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) throw new AppError("UNAUTHORIZED", "Invalid credentials", 401);
 
