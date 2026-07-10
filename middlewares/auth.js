@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { AppError } = require("../services/errors");
-const { User } = require("../models");
+const models = require("../models");
 
 function getBearerToken(req) {
   const h = req.headers.authorization;
@@ -21,7 +21,7 @@ function requireAuth() {
       if (!secret) throw new Error("Missing env: JWT_SECRET");
 
       const payload = jwt.verify(token, secret);
-      const user = await User.findByPk(payload.sub);
+      const user = await models.User.findByPk(payload.id || payload.sub);
       if (!user) throw new AppError("UNAUTHORIZED", "Invalid token", 401);
 
       req.user = { id: user.id, role: user.role, email: user.email };

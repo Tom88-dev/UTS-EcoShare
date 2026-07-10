@@ -16,5 +16,17 @@ const mine = asyncHandler(async (req, res) => {
   res.json({ success: true, data: rentals });
 });
 
-module.exports = { create, mine };
+// --- TAMBAHKAN DUA FUNGSI BARU DI BAWAH INI ---
+const getOwnerRentals = asyncHandler(async (req, res) => {
+  const rentals = await rentalService.listOwnerRentals(req.user.id);
+  res.json({ success: true, data: rentals });
+});
 
+const updateStatus = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const updated = await rentalService.updateRentalStatus(id, status);
+  res.json({ success: true, data: updated });
+});
+
+module.exports = { create, mine, getOwnerRentals, updateStatus };

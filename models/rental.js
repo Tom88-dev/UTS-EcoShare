@@ -13,7 +13,7 @@ function initRentalModel(sequelize) {
       days: { type: DataTypes.INTEGER, allowNull: false },
       totalCost: { type: DataTypes.INTEGER, allowNull: false },
       status: {
-        type: DataTypes.ENUM("CREATED", "CANCELLED", "COMPLETED"),
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: "CREATED",
       },

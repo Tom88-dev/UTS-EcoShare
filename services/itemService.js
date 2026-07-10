@@ -1,5 +1,5 @@
 const { AppError } = require("./errors");
-const { Item } = require("../models");
+const models = require("../models");
 
 async function createItem(ownerId, payload) {
   const { name, dailyPrice, stock } = payload || {};
@@ -15,7 +15,7 @@ async function createItem(ownerId, payload) {
     throw new AppError("VALIDATION_ERROR", "Invalid dailyPrice/stock", 400);
   }
 
-  const item = await Item.create({
+  const item = await models.Item.create({
     ownerId,
     name,
     dailyPrice: Number(dailyPrice),
@@ -25,8 +25,7 @@ async function createItem(ownerId, payload) {
 }
 
 async function listActiveItems() {
-  return await Item.findAll({ where: { isActive: true } });
+  return await models.Item.findAll({ where: { isActive: true } });
 }
 
 module.exports = { createItem, listActiveItems };
-

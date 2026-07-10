@@ -7,5 +7,8 @@ const router = express.Router();
 router.post("/", requireAuth(), requireRole("RENTER"), rentalController.create);
 router.get("/me", requireAuth(), rentalController.mine);
 
+router.get("/owner", requireAuth(), requireRole("OWNER"), rentalController.getOwnerRentals);
+router.patch("/:id/status", requireAuth(), requireRole("OWNER"), rentalController.updateStatus);
+
 module.exports = router;
 

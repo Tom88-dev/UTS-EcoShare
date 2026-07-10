@@ -1,11 +1,12 @@
 const { AppError } = require("./errors");
-const { sequelize, Item, Rental } = require("../models");
+const models = require("../models");
 
 function calculateTotalCost({ dailyPrice, quantity, days }) {
   return Number(dailyPrice) * Number(quantity) * Number(days);
 }
 
 async function createRental({ renterId, itemId, quantity, days }) {
+  const { sequelize, Item, Rental } = models;
   if (!itemId || !quantity || !days) {
     throw new AppError(
       "VALIDATION_ERROR",
@@ -52,8 +53,36 @@ async function createRental({ renterId, itemId, quantity, days }) {
 }
 
 async function listMyRentals(renterId) {
-  return await Rental.findAll({ where: { renterId } });
+  const { Rental, Item } = models; // Pastikan Item ikut dipanggil dari models
+  
+  return await Rental.findAll({
+    where: { renterId },
+    // Tambahkan as: 'item' atau as: 'Item' (tergantung penamaan di modelmu)
+    include: [{ model: Item, as: 'item' }] 
+  });
 }
 
-module.exports = { createRental, listMyRentals, calculateTotalCost };
+async function listOwnerRentals(ownerId) {
+  const { Rental, Item } = models;
+  
+  // 1. Cari semua barang yang dimiliki oleh Owner ini
+  const myItems = await Item.findAll({ where: { ownerId: ownerId } });
+  const itemIds = myItems.map(item => item.id);
+  
+  // 2. Ambil semua data sewa yang berelasi dengan barang-barang milik Owner tersebut
+  return await Rental.findAll({ where: { itemId: itemIds } });
+}
+
+async function updateRentalStatus(rentalId, status) {
+  const { Rental } = models;
+  const rental = await Rental.findByPk(rentalId);
+  if (!rental) throw new Error("Data sewa tidak ditemukan");
+  
+  rental.status = status;
+  await rental.save();
+  return rental;
+}
+
+// Update module.exports milikmu agar menyertakan dua fungsi baru di atas:
+module.exports = { createRental, listMyRentals, calculateTotalCost, listOwnerRentals, updateRentalStatus };
 
