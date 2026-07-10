@@ -6,7 +6,7 @@ Eco-Share Backend API adalah layanan server RESTful yang mengelola logika bisnis
 ## Stack / Teknis
 * **Bahasa Pemrograman:** JavaScript (Node.js)
 * **Framework:** Express.js
-* **Database:** MySQL *(Catatan: Ganti dengan PostgreSQL/MongoDB jika kamu menggunakan yang lain)*
+* **Database:** MySQL 
 * **Keamanan/Autentikasi:** JWT (JSON Web Token)
 
 ## Flow Aplikasi
